@@ -392,7 +392,7 @@ function App() {
                   Encrypt Message
                 </button>
               </a>
-              <a href="/Nadara_CV.pdf" download style={{ textDecoration: "none" }}>
+              <a href="/Nadara_CV.pdf" download="Nadara_CV.pdf" style={{ textDecoration: "none" }}>
                 <button
                   style={{
                     background: "transparent",
