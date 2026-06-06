@@ -130,6 +130,7 @@ function App() {
   const [formMsg, setFormMsg] = useState("");
   const [txStatus, setTxStatus] = useState("idle"); // idle | encrypting | sending | success
   const [txLogs, setTxLogs] = useState([]);
+  const [viewPDF, setViewPDF] = useState(false);
 
   // Typewriter Cursor blinking
   useEffect(() => {
@@ -392,8 +393,7 @@ function App() {
                   Encrypt Message
                 </button>
               </a>
-              <a href="/Professional%20Resume.pdf" download="Professional Resume.pdf" style={{ textDecoration: "none" }}>
-                <button
+              <button
                   style={{
                     background: "transparent",
                     color: "var(--primary)",
@@ -408,10 +408,11 @@ function App() {
                   }}
                   onMouseEnter={(e) => { e.target.style.background = "rgba(56, 189, 248, 0.06)" }}
                   onMouseLeave={(e) => { e.target.style.background = "transparent" }}
+                  onClick={() => setViewPDF(true)}
                 >
-                  Download CV
+                  View CV
                 </button>
-              </a>
+              
             </div>
           </div>
 
@@ -713,6 +714,22 @@ function App() {
           </div>
         </div>
       </section>
+      {/* PDF Viewer Modal (view-only) */}
+      {viewPDF && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.6)" }}>
+          <div style={{ width: "88%", height: "88%", background: "#02040a", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "8px", overflow: "hidden", display: "flex", flexDirection: "column" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 14px", borderBottom: "1px solid rgba(255,255,255,0.04)", background: "#04060b" }}>
+              <div style={{ color: "var(--primary)", fontFamily: "var(--heading)", fontSize: "0.95rem" }}>Professional Resume</div>
+              <div style={{ display: "flex", gap: "8px" }}>
+                <button onClick={() => setViewPDF(false)} style={{ background: "transparent", color: "var(--text-muted)", border: "1px solid rgba(255,255,255,0.04)", padding: "6px 10px", borderRadius: "6px", cursor: "pointer" }}>Close</button>
+              </div>
+            </div>
+            <div style={{ flex: 1, background: "#0a0f17" }}>
+              <iframe src="/Professional%20Resume.pdf" title="Resume Viewer" style={{ width: "100%", height: "100%", border: 0 }} sandbox />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Footer */}
       <footer
