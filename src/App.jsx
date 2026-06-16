@@ -128,9 +128,65 @@ function App() {
   const [formName, setFormName] = useState("");
   const [formEmail, setFormEmail] = useState("");
   const [formMsg, setFormMsg] = useState("");
-  const [txStatus, setTxStatus] = useState("idle"); // idle | encrypting | sending | success
+  const [submitting, setSubmitting] = useState(false);
+  const [txStatus, setTxStatus] = useState("idle"); // idle | sending | success | error
   const [txLogs, setTxLogs] = useState([]);
   const [viewPDF, setViewPDF] = useState(false);
+
+  const handleSecureTransmit = async (e) => {
+    e.preventDefault();
+    if (!formName || !formEmail || !formMsg) return;
+
+    setSubmitting(true);
+    setTxStatus("sending");
+    setTxLogs([
+      "[+] Initiating handshake protocol...",
+      "[+] Connected to uplink node.",
+    ]);
+
+    const addLog = (message, delay) => {
+      setTimeout(() => {
+        setTxLogs((prev) => [...prev, message]);
+      }, delay);
+    };
+
+    addLog("[+] Generating ephemeral 256-bit AES key...", 800);
+    addLog("[+] Encrypting payload with AES-CBC mode...", 1500);
+    addLog("[+] Appending signature (HMAC-SHA256)...", 2200);
+    addLog("[+] Transmitting packets to nadara-sec server...", 2800);
+
+    const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+    const fetchPromise = fetch("https://formspree.io/f/xojzbdla", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({ name: formName, email: formEmail, message: formMsg }),
+    }).then(async (res) => {
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.error || "Submission failed");
+      }
+      return data;
+    });
+
+    const [result] = await Promise.allSettled([fetchPromise, delay(3500)]);
+
+    if (result.status === "fulfilled") {
+      setTxLogs((prev) => [...prev, "[SUCCESS] Uplink acknowledged: 200 OK. Packets delivered."]);
+      setTxStatus("success");
+      setFormName("");
+      setFormEmail("");
+      setFormMsg("");
+    } else {
+      console.error(result.reason);
+      setTxLogs((prev) => [...prev, "[ERROR] Transmission aborted. Retry or contact direct."]);
+      setTxStatus("error");
+    }
+
+    setSubmitting(false);
+  };
 
   // Typewriter Cursor blinking
   useEffect(() => {
@@ -162,39 +218,7 @@ function App() {
     return () => clearTimeout(timeout);
   }, [subIdx, reverse, wordIdx]);
 
-  // Form submit simulation
-  const handleSecureTransmit = (e) => {
-    e.preventDefault();
-    if (!formName || !formEmail || !formMsg) return;
-
-    setTxStatus("encrypting");
-    setTxLogs(["[+] Initiating handshake protocol...", "[+] Connected to uplink node."]);
-
-    const logSteps = [
-      { delay: 800, log: "[+] Generating ephemeral 256-bit AES key..." },
-      { delay: 1500, log: "[+] Encrypting payload with AES-CBC mode..." },
-      { delay: 2200, log: "[+] Appending signature (HMAC-SHA256)..." },
-      { delay: 2800, log: "[+] Transmitting packets to nadara-sec server..." },
-      { delay: 3500, log: "[SUCCESS] Uplink acknowledged: 200 OK. Packets written to disk." }
-    ];
-
-    logSteps.forEach((step) => {
-      setTimeout(() => {
-        setTxLogs((prev) => [...prev, step.log]);
-        if (step.log.includes("SUCCESS")) {
-          setTxStatus("success");
-          setFormName("");
-          setFormEmail("");
-          setFormMsg("");
-        }
-      }, step.delay);
-    });
-  };
-
-  const handleResetTx = () => {
-    setTxStatus("idle");
-    setTxLogs([]);
-  };
+  const showFormSuccess = txStatus === "success";
 
   return (
     <div style={{ minHeight: "100vh", position: "relative" }}>
@@ -587,7 +611,7 @@ function App() {
 
           <div className="cyber-card" style={{ padding: "32px", border: "1px solid rgba(56, 189, 248, 0.25)" }}>
             <AnimatePresence mode="wait">
-              {txStatus === "idle" && (
+              {txStatus === "idle" || txStatus === "error" ? (
                 <motion.form
                   key="form"
                   initial={{ opacity: 0 }}
@@ -603,6 +627,7 @@ function App() {
                     <input
                       type="text"
                       className="cyber-input"
+                      name="name"
                       value={formName}
                       onChange={(e) => setFormName(e.target.value)}
                       placeholder="e.g. Guest-Agent"
@@ -617,6 +642,7 @@ function App() {
                     <input
                       type="email"
                       className="cyber-input"
+                      name="email"
                       value={formEmail}
                       onChange={(e) => setFormEmail(e.target.value)}
                       placeholder="e.g. client@domain.xyz"
@@ -631,6 +657,7 @@ function App() {
                     <textarea
                       rows="4"
                       className="cyber-input"
+                      name="message"
                       value={formMsg}
                       onChange={(e) => setFormMsg(e.target.value)}
                       placeholder="Enter details of request or research query..."
@@ -639,18 +666,20 @@ function App() {
                     />
                   </div>
 
-                  <button type="submit" className="btn-cyber" style={{ width: "100%", marginTop: "10px", display: "flex", justifyContent: "center", alignItems: "center", gap: "10px" }}>
+                  <button type="submit" className="btn-cyber" style={{ width: "100%", marginTop: "10px", display: "flex", justifyContent: "center", alignItems: "center", gap: "10px" }} disabled={submitting}>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                      <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                      <path d="M4 4h16v16H4z" />
+                      <path d="M4 8l8 5 8-5" />
                     </svg>
-                    TRANSMIT SECURE PACKET
+                    {submitting ? "SENDING..." : "SEND SECURE MESSAGE"}
                   </button>
+                  {txStatus === "error" && (
+                    <div style={{ color: "#fb7185", fontFamily: "var(--mono)", fontSize: "0.9rem" }}>
+                      Transmission failed. Retry or contact direct.
+                    </div>
+                  )}
                 </motion.form>
-              )}
-
-              {/* Encryption & Send Logs Animation */}
-              {(txStatus === "encrypting" || txStatus === "sending" || txStatus === "success") && (
+              ) : (
                 <motion.div
                   key="status"
                   initial={{ opacity: 0, y: 10 }}
@@ -663,32 +692,39 @@ function App() {
                     background: "rgba(3, 7, 18, 0.95)",
                     border: "1px solid var(--border)",
                     borderRadius: "6px",
-                    padding: "24px",
-                    lineHeight: "1.8",
+                    padding: "22px",
+                    lineHeight: "1.7",
                   }}
                 >
-                  <div style={{ color: "var(--primary)", borderBottom: "1px solid rgba(56, 189, 248, 0.2)", paddingBottom: "10px", marginBottom: "15px", fontFamily: "var(--heading)", fontSize: "0.78rem" }}>
+                  <div style={{ color: "var(--primary)", borderBottom: "1px solid rgba(56, 189, 248, 0.2)", paddingBottom: "10px", marginBottom: "14px", fontFamily: "var(--heading)", fontSize: "0.72rem" }}>
                     TRANSMISSION LOGS: UPLINK
                   </div>
                   {txLogs.map((log, lIdx) => {
                     let color = "var(--text-main)";
                     if (log.includes("SUCCESS")) color = "var(--accent)";
-                    else if (log.includes("AES") || log.includes("HMAC")) color = "var(--secondary)";
+                    if (log.includes("ERROR")) color = "#fb7185";
+                    if (log.includes("AES") || log.includes("HMAC")) color = "var(--secondary)";
                     return (
-                      <div key={lIdx} style={{ color }}>
+                      <div key={lIdx} style={{ color, whiteSpace: "pre-wrap", marginBottom: "6px", fontSize: "0.82rem" }}>
                         {log}
                       </div>
                     );
                   })}
-                  {txStatus === "encrypting" && (
+                  {txStatus === "sending" && (
                     <div style={{ color: "var(--primary)", display: "flex", alignItems: "center", gap: "10px", marginTop: "10px" }}>
                       <span>Encrypting stream data packets</span>
                       <span className="terminal-cursor" style={{ height: "12px", width: "8px" }} />
                     </div>
                   )}
-                  {txStatus === "success" && (
+                  {(txStatus === "success" || txStatus === "error") && (
                     <button
-                      onClick={handleResetTx}
+                      onClick={() => {
+                        setTxStatus("idle");
+                        setTxLogs([]);
+                        setFormName("");
+                        setFormEmail("");
+                        setFormMsg("");
+                      }}
                       style={{
                         marginTop: "24px",
                         background: "rgba(56, 189, 248, 0.08)",
@@ -696,7 +732,7 @@ function App() {
                         color: "var(--primary)",
                         fontFamily: "var(--heading)",
                         fontSize: "0.75rem",
-                        padding: "8px 16px",
+                        padding: "10px 16px",
                         borderRadius: "4px",
                         cursor: "pointer",
                         letterSpacing: "1px",
