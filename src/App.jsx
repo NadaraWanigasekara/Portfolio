@@ -77,6 +77,19 @@ const SKILLS_DATA = [
 
 const PROJECTS_DATA = [
   {
+    title: "OWASP Juice Shop DevSecOps Assessment",
+    tech: "OWASP Juice Shop / Semgrep / Docker",
+    desc: "A hands-on DevSecOps security assessment documenting vulnerability testing and remediation in OWASP Juice Shop, followed by retesting and evaluation of automated security checks.",
+    status: "ASSESSED // SECURITY TESTED",
+    github: "https://github.com/NadaraWanigasekara/devsecops-juice-shop-portfolio",
+    highlights: [
+      "Assessed and retested SQL injection, IDOR, DOM-based XSS, and rating validation issues",
+      "Documented remediation approaches and security evidence",
+      "Evaluated Semgrep, npm audit, Gitleaks, and Trivy checks",
+      "Recorded scan findings and limitations in the project documentation"
+    ]
+  },
+  {
     title: "Blackgate CTF",
     tech: "Python / Flask / Docker",
     desc: "A multi-stage cybersecurity CTF platform built around an incident investigation, with challenges spanning OSINT, steganography, cryptography, digital forensics, and network analysis.",
