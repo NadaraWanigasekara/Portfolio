@@ -867,8 +867,16 @@ function App() {
                 <button onClick={() => setViewPDF(false)} style={{ background: "transparent", color: "var(--text-muted)", border: "1px solid rgba(255,255,255,0.04)", padding: "6px 10px", borderRadius: "6px", cursor: "pointer" }}>Close</button>
               </div>
             </div>
+            <div style={{ padding: "12px 16px", background: "rgba(5, 11, 28, 0.95)", borderBottom: "1px solid rgba(56, 189, 248, 0.18)", flexShrink: 0 }}>
+              <div style={{ color: "var(--primary)", fontFamily: "var(--mono)", fontSize: "0.72rem", letterSpacing: "1px", marginBottom: "8px" }}>
+                CYBERSECURITY SKILLS
+              </div>
+              <div style={{ color: "var(--text-main)", fontSize: "0.82rem", lineHeight: 1.6 }}>
+                Nmap · Burp Suite · Docker · DevSecOps · Wireshark · OWASP
+              </div>
+            </div>
             <div style={{ flex: 1, background: "#0a0f17" }}>
-              <iframe src="/Professional%20Resume.pdf" title="Resume Viewer" style={{ width: "100%", height: "100%", border: 0 }} sandbox />
+              <iframe src="/Nadara%20Wanigasekara.pdf" title="Resume Viewer" style={{ width: "100%", height: "100%", border: 0 }} sandbox />
             </div>
           </div>
         </div>
