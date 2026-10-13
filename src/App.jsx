@@ -77,6 +77,19 @@ const SKILLS_DATA = [
 
 const PROJECTS_DATA = [
   {
+    title: "Blackgate CTF",
+    tech: "Python / Flask / Docker",
+    desc: "A multi-stage cybersecurity CTF platform built around an incident investigation, with challenges spanning OSINT, steganography, cryptography, digital forensics, and network analysis.",
+    status: "ACTIVE // FIVE STAGES",
+    github: "https://github.com/NadaraWanigasekara/Blackgate-CTF",
+    highlights: [
+      "Five progressive, scenario-based security challenges",
+      "Separate portal, submission, and challenge-box services",
+      "Hands-on investigation of evidence and network traffic",
+      "Docker-based deployment for the CTF environment"
+    ]
+  },
+  {
     title: "Online Appointment Scheduling System",
     tech: "Java Servlets / HTML & CSS",
     desc: "A clinic administration web app designed to manage patient histories, prioritize queues, and persist data securely using local flat files.",

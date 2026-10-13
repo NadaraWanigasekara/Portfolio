@@ -23,9 +23,10 @@ const COMMAND_RESPONSES = {
   projects: [
     "----------------------------------------------------------------",
     "REGISTRY PROJECTS MATRIX:",
-    "  1. APPOINTMENT-SYS - Clinic Admin Web App (Java Servlets)",
-    "  2. SMILECARE-SE    - Dental Management System (Java & Maven)",
-    "  3. LOAN-PREDICTOR  - Classification ML Pipeline (Python)",
+    "  1. BLACKGATE-CTF   - Five-stage Cybersecurity Challenge (Flask/Docker)",
+    "  2. APPOINTMENT-SYS - Clinic Admin Web App (Java Servlets)",
+    "  3. SMILECARE-SE    - Dental Management System (Java & Maven)",
+    "  4. LOAN-PREDICTOR  - Classification ML Pipeline (Python)",
     "----------------------------------------------------------------",
   ],
 };
