@@ -75,6 +75,15 @@ const SKILLS_DATA = [
     ), details: ["Layouts, responsive, animations"] }
 ];
 
+const CYBER_SKILLS_DATA = [
+  { name: "Nmap", details: "Port scanning, service enumeration" },
+  { name: "Burp Suite", details: "HTTP analysis, web security testing" },
+  { name: "Docker", details: "Containers, security lab environments" },
+  { name: "DevSecOps", details: "CI/CD, automated security checks" },
+  { name: "Wireshark", details: "Packet analysis, network protocols" },
+  { name: "OWASP", details: "Web vulnerabilities, security testing" },
+];
+
 const PROJECTS_DATA = [
   {
     title: "OWASP Juice Shop DevSecOps Assessment",
@@ -518,6 +527,78 @@ function App() {
                   </ul>
                 </div>
               </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Cybersecurity Skills Section */}
+      <section
+        id="cyber-skills"
+        style={{
+          background: "rgba(5, 11, 28, 0.35)",
+          borderBottom: "1px solid rgba(56, 189, 248, 0.1)",
+        }}
+      >
+        <div className="section-container" style={{ textAlign: "center" }}>
+          <h2
+            style={{ fontSize: "2rem", marginBottom: "12px" }}
+            className="glow-text-purple"
+          >
+            CYBERSECURITY SKILLS
+          </h2>
+          <p
+            style={{
+              color: "var(--text-muted)",
+              marginBottom: "40px",
+              maxWidth: "600px",
+              marginInline: "auto",
+            }}
+          >
+            Security tools and practices used in network, web application, and DevSecOps work.
+          </p>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+              gap: "18px",
+              textAlign: "left",
+            }}
+          >
+            {CYBER_SKILLS_DATA.map((skill) => (
+              <article
+                key={skill.name}
+                className="cyber-card"
+                style={{ padding: "22px 24px", borderRadius: "10px" }}
+              >
+                <h3
+                  style={{
+                    fontSize: "1.05rem",
+                    margin: "0 0 10px",
+                    color: "#ffffff",
+                    fontFamily: "var(--heading)",
+                  }}
+                >
+                  <span
+                    aria-hidden="true"
+                    style={{ color: "var(--primary)", marginRight: "10px" }}
+                  >
+                    ▸
+                  </span>
+                  {skill.name}
+                </h3>
+                <p
+                  style={{
+                    color: "var(--text-muted)",
+                    fontSize: "0.9rem",
+                    lineHeight: "1.5",
+                    margin: 0,
+                  }}
+                >
+                  {skill.details}
+                </p>
+              </article>
             ))}
           </div>
         </div>

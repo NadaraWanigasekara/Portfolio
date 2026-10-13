@@ -18,6 +18,8 @@ const COMMAND_RESPONSES = {
     "  • Machine Learning & AI : Classification pipelines, scikit-learn",
     "  • Database Security     : SQL injection protection, sanitization",
     "  • Clinical Architectures: Management systems, priority scheduling",
+    "  • Cybersecurity Tools   : Nmap, Burp Suite, Wireshark, OWASP",
+    "  • Security Operations   : Docker labs, DevSecOps, automated checks",
     "----------------------------------------------------------------",
   ],
   projects: [
